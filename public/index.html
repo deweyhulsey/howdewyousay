@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <input id="text" placeholder="Enter a sentence" size="50">
+
+  <label>
+    <input type="checkbox" id="allPronunciations">
+    Speak all pronunciations
+  </label>
+
+  <button onclick="speak()">Play</button>
+
+  <script>
+    async function speak() {
+      const text = document.getElementById("text").value;
+      const all = document.getElementById("allPronunciations").checked;
+
+      const response = await fetch("/speak", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, all })
+      });
+
+      if (!response.ok) {
+        alert(await response.text());
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+
+      const audio = new Audio(url);
+      audio.play();
+    }
+  </script>
+</body>
+</html>
